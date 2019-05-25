@@ -1,5 +1,7 @@
 <mvc:View xmlns="sap.m" xmlns:semantic="sap.f.semantic" xmlns:tnt="sap.tnt" xmlns:si="sap.suite.ui.commons.statusindicator"
-	xmlns:mvc="sap.ui.core.mvc" controllerName="opensap.orders.controller.Detail">
+	xmlns:mvc="sap.ui.core.mvc" controllerName="opensap.orders.controller.Detail"
+	xmlns:l="sap.ui.layout"
+	xmlns:control="opensap.orders.control">
 	<semantic:SemanticPage id="detailPage" busy="{detailView&gt;/busy}" busyIndicatorDelay="{detailView&gt;/delay}" showFooter="true">
 		<semantic:titleHeading>
 			<Title text="{CustomerName}" level="H2"/>
@@ -10,6 +12,13 @@
 				colorScheme="{ path: 'LifecycleStatusDescription', formatter: '.formatter.deliveryStatus' }"/>
 		</semantic:headerContent>
 		<semantic:content>
+			
+			<l:VerticalLayout>
+				<control:OrderPreparations
+					id="orderPreparations"
+					confirm=".onConfirm">
+				</control:OrderPreparations>
+			
 			<Table id="lineItemsList" width="auto" items="{ToLineItems}" mode="SingleSelectMaster" sticky="ColumnHeaders,HeaderToolbar"
 				updateFinished=".onListUpdateFinished" noDataText="{i18n&gt;detailLineItemTableNoDataText}"
 				busyIndicatorDelay="{detailView&gt;/lineItemTableDelay}" selectionChange="action"
@@ -60,6 +69,9 @@
 					</ColumnListItem>
 				</items>
 			</Table>
+			
+			</l:VerticalLayout>
+			
 		</semantic:content>
 		<!--Semantic ShareMenu Buttons-->
 		<semantic:sendEmailAction>

@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"../model/formatter",
 	"sap/m/library",
-	"sap/ui/Device"
-], function (BaseController, JSONModel, formatter, mobileLibrary, Device) {
+	"sap/ui/Device",
+	"sap/m/MessageToast"
+], function (BaseController, JSONModel, formatter, mobileLibrary, Device, MessageToast) {
 	"use strict";
 	// shortcut for sap.m.URLHelper
 	var URLHelper = mobileLibrary.URLHelper;
@@ -27,6 +28,16 @@ sap.ui.define([
 			this.setModel(oViewModel, "detailView");
 			this.getOwnerComponent().getModel().metadataLoaded().then(this._onMetadataLoaded.bind(this));
 		},
+
+		onConfirm: function (oEvent) {
+			var oBinding = oEvent.getSource().getBindingContext().getObject();
+			var oMessage = this.getResourceBundle().getText(
+				"OrderPreparationMessage", [oBinding.CustomerID,
+					oBinding.CustomerName
+				]);
+			MessageToast.show(oMessage);
+		},
+
 		/* =========================================================== */
 		/* event handlers                                              */
 		/* =========================================================== */
@@ -34,7 +45,7 @@ sap.ui.define([
 		 * Event handler when the share by E-Mail button has been clicked
 		 * @public
 		 */
-		onSendEmailPress: function () {
+			onSendEmailPress: function () {
 			var oViewModel = this.getModel("detailView");
 			URLHelper.triggerEmail(null, oViewModel.getProperty("/shareSendEmailSubject"), oViewModel.getProperty("/shareSendEmailMessage"));
 		},
@@ -68,15 +79,15 @@ sap.ui.define([
 		 */
 		_onObjectMatched: function (oEvent) {
 			var sObjectId = oEvent.getParameter("arguments").objectId;
-			
+
 			if (!sObjectId) {
 				return;
 			}
-			
+
 			if (oEvent.getParameter("name") === "object") {
 				this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
 			}
-			
+
 			this.getModel().metadataLoaded().then(function () {
 				var sObjectPath = this.getModel().createKey("SalesOrderSet", {
 					SalesOrderID: sObjectId
@@ -183,10 +194,10 @@ sap.ui.define([
 		action: function (oEvent) {
 			var bReplace = !Device.system.phone;
 			this.getRouter().navTo("Info", {
-				objectId : (oEvent.getParameter("listItem") || oEvent.getSource()).getBindingContext().getProperty("SalesOrderID"),
-				itemPosition : (oEvent.getParameter("listItem") || oEvent.getSource()).getBindingContext().getProperty("ItemPosition")
+				objectId: (oEvent.getParameter("listItem") || oEvent.getSource()).getBindingContext().getProperty("SalesOrderID"),
+				itemPosition: (oEvent.getParameter("listItem") || oEvent.getSource()).getBindingContext().getProperty("ItemPosition")
 			}, bReplace);
-			
+
 		}
 	});
 });
