@@ -23,8 +23,7 @@
 							<Title id="lineItemsTitle" text="{detailView&gt;/lineItemListTitle}" titleStyle="H3" level="H3"/>
 							<ToolbarSpacer/>
 							<Button icon="sap-icon://add" tooltip="{i18n>createButtonTooltip}" press=".onCreate"/>
-							<control:DeleteButton icon="sap-icon://delete"
-								press=".onDelete">
+							<control:DeleteButton icon="sap-icon://delete" press=".onDelete">
 								<control:dragDropConfig>
 									<dnd:DropInfo drop=".onDelete"/>
 								</control:dragDropConfig>
@@ -50,6 +49,8 @@
 					</columns>
 					<dragDropConfig>
 						<dnd:DragInfo sourceAggregation="items"/>
+						<dnd:DropInfo targetAggregation="items" dropPosition="Between" drop=".onDropSelectedOrderItem"/>
+						<dnd:DragDropInfo sourceAggregation="items" targetAggregation="items" dropPosition="Between" drop=".onDropSelectedOrderItem"/>
 					</dragDropConfig>
 					<items>
 						<ColumnListItem selected="{= ${ItemPosition} === ${appView>/selectedItemId}}" type="Navigation">

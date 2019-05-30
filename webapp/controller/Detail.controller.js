@@ -243,6 +243,32 @@ sap.ui.define([
 					}.bind(this)
 				});
 			}.bind(this));
+		},
+
+		onDropSelectedOrderItem: function (oEvent) {
+			var oDraggedItem = oEvent.getParameter("draggedControl");
+			var oDroppedItem = oEvent.getParameter("droppedControl");
+
+			var oDraggedTable = oDraggedItem.getParent();
+			var oDroppedTable = oDroppedItem.getParent();
+
+			var iDragPosition = oDraggedTable.indexOfItem(oDraggedItem);
+			var iDropPosition = oDroppedTable.indexOfItem(oDroppedItem);
+
+			var sDropPosition = oEvent.getParameter("dropPosition");
+			
+			oDraggedTable.removeItem(oDraggedItem);
+			
+			if(iDragPosition < iDropPosition){
+				iDropPosition--;
+			}
+			
+			if (sDropPosition === "Before") {
+				oDroppedTable.insertItem(oDraggedItem, iDropPosition);
+			} else {
+				oDroppedTable.insertItem(oDraggedItem, iDropPosition + 1);
+			}
+
 		}
 
 	});
