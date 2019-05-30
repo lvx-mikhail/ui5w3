@@ -25,8 +25,16 @@ sap.ui.define([
 			});
 			this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
 			this.getRouter().getRoute("Info").attachPatternMatched(this._onObjectMatched, this);
+			this.getRouter().getRoute("create").attachPatternMatched(this._onObjectMatched, this);
 			this.setModel(oViewModel, "detailView");
 			this.getOwnerComponent().getModel().metadataLoaded().then(this._onMetadataLoaded.bind(this));
+		},
+
+		onCreate: function (oEvent) {
+			var bReplace = !Device.system.phone;
+			this.getRouter().navTo("create", {
+				objectId: oEvent.getSource().getBindingContext().getProperty("SalesOrderID")
+			}, bReplace);
 		},
 
 		onConfirm: function (oEvent) {
@@ -45,7 +53,7 @@ sap.ui.define([
 		 * Event handler when the share by E-Mail button has been clicked
 		 * @public
 		 */
-			onSendEmailPress: function () {
+		onSendEmailPress: function () {
 			var oViewModel = this.getModel("detailView");
 			URLHelper.triggerEmail(null, oViewModel.getProperty("/shareSendEmailSubject"), oViewModel.getProperty("/shareSendEmailMessage"));
 		},
@@ -198,6 +206,44 @@ sap.ui.define([
 				itemPosition: (oEvent.getParameter("listItem") || oEvent.getSource()).getBindingContext().getProperty("ItemPosition")
 			}, bReplace);
 
+		},
+
+		onDelete: function (oEvent) {
+			// delete the dragged item
+			var oItemToDelete = oEvent.getParameter("draggedControl");
+
+			// delete the selected item from the list - if nothing selected, remove the first item
+			if (!oItemToDelete) {
+				var oList = this.byId("lineItemsList");
+				oItemToDelete = oList.getSelectedItem() || oList.getItems()[0];
+			}
+
+			// delete the item after user confirmation
+			var sPath = oItemToDelete.getBindingContextPath(),
+				sTitle = oItemToDelete.getBindingContext().getProperty("ProductID");
+			this._confirmDelete(sPath, sTitle);
+		},
+
+		_confirmDelete: function (sPath, sTitle) {
+			var oResourceBundle = this.getResourceBundle();
+			sap.ui.require(["sap/m/MessageBox"], function (MessageBox) {
+				MessageBox.confirm(oResourceBundle.getText("deleteConfirmationMessage", [sTitle]), {
+					title: oResourceBundle.getText("confirmTitle"),
+					onClose: function (sAction) {
+						if (sAction === "OK") {
+							this.getModel().remove(sPath, {
+								success: function () {
+									MessageToast.show(oResourceBundle.getText("deleteSuccessMessage"));
+								},
+								error: function () {
+									MessageBox.error(oResourceBundle.getText("deleteErrorMessage"));
+								}
+							});
+						}
+					}.bind(this)
+				});
+			}.bind(this));
 		}
+
 	});
 });
