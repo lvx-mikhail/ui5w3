@@ -5,7 +5,8 @@ sap.ui.define([
 	"./pages/Master",
 	"./pages/Detail",
 	"./pages/Browser",
-	"./pages/App"
+	"./pages/App",
+	"./pages/Info"
 ], function (opaTest) {
 	"use strict";
 
@@ -17,11 +18,11 @@ sap.ui.define([
 
 		// Actions
 		When.onTheMasterPage.iRememberTheIdOfListItemAtPosition(1).
-			and.iPressOnTheObjectAtPosition(1);
+		and.iPressOnTheObjectAtPosition(1);
 
 		// Assertions
 		Then.onTheDetailPage.iShouldSeeTheRememberedObject().
-			and.iShouldSeeHeaderActionButtons();
+		and.iShouldSeeHeaderActionButtons();
 		Then.onTheBrowserPage.iShouldSeeTheHashForTheRememberedObject();
 	});
 
@@ -53,18 +54,18 @@ sap.ui.define([
 		Then.onTheMasterPage.theRememberedListItemShouldBeSelected();
 	});
 
-
 	opaTest("Detail Page Shows Object Details", function (Given, When, Then) {
 
 		// Assertions
 		Then.onTheDetailPage.iShouldSeeTheObjectLineItemsList().
-			and.theDetailViewShouldContainOnlyFormattedUnitNumbers().
-			and.theLineItemsListShouldHaveTheCorrectNumberOfItems().
-			and.theLineItemsHeaderShouldDisplayTheAmountOfEntries();
+		and.theDetailViewShouldContainOnlyFormattedUnitNumbers().
+		and.theLineItemsListShouldHaveTheCorrectNumberOfItems().
+		and.theLineItemsHeaderShouldDisplayTheAmountOfEntries();
 
 	});
 
-	opaTest("Navigate to an object not on the client: no item should be selected and the object page should be displayed", function (Given, When, Then) {
+	opaTest("Navigate to an object not on the client: no item should be selected and the object page should be displayed", function (Given,
+		When, Then) {
 		//Actions
 		When.onTheMasterPage.iRememberAnIdOfAnObjectThatsNotInTheList();
 		When.onTheBrowserPage.iChangeTheHashToTheRememberedItem();
@@ -88,8 +89,8 @@ sap.ui.define([
 	opaTest("Start the App and simulate metadata error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartMyApp({
-			delay : 1000,
-			metadataError : true
+			delay: 1000,
+			metadataError: true
 		});
 
 		// Assertions
@@ -105,8 +106,8 @@ sap.ui.define([
 	opaTest("Start the App and simulate bad request error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartMyApp({
-			delay : 1000,
-			errorType : 'serverError'
+			delay: 1000,
+			errorType: 'serverError'
 		});
 
 		// Assertions
@@ -114,6 +115,18 @@ sap.ui.define([
 
 		// Actions
 		When.onTheAppPage.iCloseTheMessageBox();
+
+		// Cleanup
+		Then.iTeardownMyApp();
+	});
+
+	opaTest("Open Third Column", function (Given, When, Then) {
+		// Actions
+		When.onTheDetailPage.iPressOnTheFirstObject();
+
+		// Assertions
+		Then.onTheAppPage.theAppShowsFCLDesign("ThreeColumnsEndExpanded");
+		Then.onTheInfoPage.iShouldSeeTheInfoPage();
 
 		// Cleanup
 		Then.iTeardownMyApp();
